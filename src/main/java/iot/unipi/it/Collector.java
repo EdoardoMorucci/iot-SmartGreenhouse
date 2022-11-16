@@ -9,7 +9,7 @@ public class Collector {
     public static void main(String[] args) {
 
         //CollectorCoapServer server = new CollectorCoapServer();
-
+        // test
         //server.add(new CoAPResourceExample("hello"));
         //server.start();
 

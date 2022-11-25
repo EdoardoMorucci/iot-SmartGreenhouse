@@ -11,6 +11,11 @@
             <name>Californium Repository</name>
             <url>https://repo.eclipse.org/content/repositories/californium/</url>
         </repository>
+
+        <repository>
+            <id>Eclipse Paho Repo</id>
+            <url>https://repo.eclipse.org/content/repositories/paho-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -24,12 +29,21 @@
             <artifactId>json</artifactId>
             <version>20210307</version>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.26</version>
         </dependency>
+
 
     </dependencies>
 

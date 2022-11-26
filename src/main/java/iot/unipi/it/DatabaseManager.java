@@ -60,20 +60,35 @@ public class DatabaseManager {
         }
     }
 
+    public static void insert_pH(float pH, int state_pH, Timestamp ourTimestamp) {
+        String sql = "INSERT INTO pH (pH, state_pH, time_stamp) VALUES(?, ?, ?)";
+        try{
+            Connection conn = makeConnection();
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setFloat(1, pH);
+            stm.setInt(2, state_pH);
+            stm.setTimestamp(3, ourTimestamp);
+            stm.executeUpdate();
+            conn.close();
+        }catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
 
-    public static void show_data(String table, String offset, String limit) {
+
+    public static void print_data(String table, String offset, String limit) {
         String sql="SELECT * FROM "+table+" ORDER BY id DESC "+"LIMIT "+limit+" OFFSET "+offset;
         try {
             Connection conn=makeConnection();
             Statement stm=conn.createStatement();
-            print_data(stm.executeQuery(sql));
+            print_data2(stm.executeQuery(sql));
             conn.close();
         }catch(SQLException se) {
             se.printStackTrace();
         }
     }
 
-    private static void print_data(ResultSet rs) {
+    private static void print_data2(ResultSet rs) {
 
         try {
             ResultSetMetaData md=rs.getMetaData();

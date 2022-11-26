@@ -16,9 +16,6 @@ public class CollectorCoapServer extends CoapServer {
         this.add(new CoapRegisterResource());
     }
 
-    public void printWaterLevel() {
-        coapClientHandler.printWaterLevelSensor();
-    }
 
     class CoapRegisterResource extends CoapResource {
 
@@ -37,6 +34,12 @@ public class CollectorCoapServer extends CoapServer {
                     break;
                 case "led_water_actuator":
                     coapClientHandler.registerLedWater(ipAddress);
+                    break;
+                case "pH_sensor":
+                    coapClientHandler.registerPH(ipAddress);
+                    break;
+                case "led_ph_actuator":
+                    coapClientHandler.registerLedPH(ipAddress);
                     break;
                 default:
                     success = false;
@@ -71,5 +74,15 @@ public class CollectorCoapServer extends CoapServer {
         */
 
     }
+
+    public void printWaterLevelSensor() {
+        coapClientHandler.printWaterLevelSensor();
+    }
+
+    public void getCurrentpH() { coapClientHandler.getCurrentpH(); }
+
+    public void getCurrentWater() { coapClientHandler.getCurrentWater(); }
+
+    public void printpHSensor() { coapClientHandler.printpHSensor(); }
 
 }

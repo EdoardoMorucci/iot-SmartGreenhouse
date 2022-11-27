@@ -68,25 +68,31 @@ public class Collector {
 
                     case "!currentTemperature":
                         System.out.printf("The current temperature is %.1f\n",collectorMqtt.getCurrentTemp());
+                        break;
 
                     case "!currentHumidity":
                         System.out.println("The current humidity is " + collectorMqtt.getCurrentHumidity());
+                        break;
 
                     case "!printHistoryTemperature":
                         if(checkNumberParameter(splittedCommand, 3)) {
                             DatabaseManager.print_data("temperature", splittedCommand[1], splittedCommand[2]);
                         }
+                        break;
 
                     case "!printHistoryHumidity":
                         if(checkNumberParameter(splittedCommand, 3)) {
                             DatabaseManager.print_data("humidity", splittedCommand[1], splittedCommand[2]);
                         }
+                        break;
 
                     case "!printContinuousHumidity":
                         collectorMqtt.setContinuousHum(true);
+                        break;
 
                     case "!printContinuousTemperature":
                         collectorMqtt.setContinuousTemp(true);
+                        break;
 
                     case "!stop":
                         CoapClientHandler.continuosPrintWater = false;
@@ -98,7 +104,6 @@ public class Collector {
                     default:
                         System.out.println("This command is not available.");
                         printCommands();
-                        break;
                 }
 
 

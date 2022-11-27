@@ -73,6 +73,35 @@ public class DatabaseManager {
             se.printStackTrace();
         }
     }
+    public static void insert_temperature(float temperature, String unit, int ourTimestamp){
+        String sql = "INSERT INTO temperature (temperature, unit, time_stamp) VALUES(?, ?, ?)";
+        try{
+            Connection conn = makeConnection();
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setFloat(1, temperature);
+            stm.setString(2, unit);
+            stm.setInt(3, ourTimestamp);
+            stm.executeUpdate();
+            conn.close();
+        }catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
+
+    public static void insert_humidity(int humidity, String unit, int ourTimestamp){
+        String sql = "INSERT INTO humidity (humidity, unit, time_stamp) VALUES(?, ?, ?)";
+        try{
+            Connection conn = makeConnection();
+            PreparedStatement stm = conn.prepareStatement(sql);
+            stm.setInt(1, humidity);
+            stm.setString(2, unit);
+            stm.setInt(3, ourTimestamp);
+            stm.executeUpdate();
+            conn.close();
+        }catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
 
 
     public static void print_data(String table, String offset, String limit) {

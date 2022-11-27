@@ -3,6 +3,7 @@ package iot.unipi.it;
 import iot.unipi.it.coap.CoapClientHandler;
 import iot.unipi.it.coap.CollectorCoapServer;
 import iot.unipi.it.db.DatabaseManager;
+import iot.unipi.it.mqtt.CollectorMqtt;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ public class Collector {
     public static void main(String[] args) throws SocketException, MqttException {
 
         CollectorCoapServer coapServer = new CollectorCoapServer();
-        //CollectorMqtt collectorMqtt = new CollectorMqtt();
+        CollectorMqtt collectorMqtt = new CollectorMqtt();
         //server.add(new CoAPResourceExample("hello"));
         coapServer.start();
 
@@ -64,15 +65,48 @@ public class Collector {
                             DatabaseManager.print_data("waterlevel", splittedCommand[1], splittedCommand[2]);
                         }
                         break;
+
+                    case "!currentTemperature":
+                        System.out.printf("The current temperature is %.1f\n",collectorMqtt.getCurrentTemp());
+
+                    case "!currentHumidity":
+                        System.out.println("The current humidity is " + collectorMqtt.getCurrentHumidity());
+
+                    case "!printHistoryTemperature":
+                        if(checkNumberParameter(splittedCommand, 3)) {
+                            DatabaseManager.print_data("temperature", splittedCommand[1], splittedCommand[2]);
+                        }
+
+                    case "!printHistoryHumidity":
+                        if(checkNumberParameter(splittedCommand, 3)) {
+                            DatabaseManager.print_data("humidity", splittedCommand[1], splittedCommand[2]);
+                        }
+
+                    case "!printContinuousHumidity":
+                        collectorMqtt.setContinuousHum(true);
+
+                    case "!printContinuousTemperature":
+                        collectorMqtt.setContinuousTemp(true);
+
                     case "!stop":
                         CoapClientHandler.continuosPrintWater = false;
                         CoapClientHandler.continuosPrintPH = false;
+                        collectorMqtt.setContinuousTemp(false);
+                        collectorMqtt.setContinuousHum(false);
                         break;
+
                     default:
                         System.out.println("This command is not available.");
                         printCommands();
                         break;
                 }
+
+
+
+                System.out.printf("%s \n", command);
+
+                //server.printWaterLevel();
+
 
             } catch (IOException e) {
                 System.out.println("Command not found!");
@@ -104,6 +138,13 @@ public class Collector {
                 "   !pHSensor --> print the ip address of the pH sensor (if present)\n" +
                 "   !printHistorypH <limit> <offset>\n " +
                 "   !printHistoryWaterLevel <limit> <offset>\n " +
+                "   !currentTemperature --> get the current temperature in thr greenhouse\n" +
+                "   !currentHumidity --> get the current soil humidity expressed as percentage\n" +
+                "   !printHistoryTemperature <limit> <offset>\n" +
+                "   !printHistoryHumidity <limit> <offset>\n" +
+                "   !printHistoryWaterLevel <limit> <offset>\n " +
+                "   !printContinuousHumidity --> continuous print of Humidity received, stop using !stop\n" +
+                "   !printContinuousTemperature --> continuous print of Temperature received, stop using !stop\n" +
                 "   !stop --> stop continuous printing \n"
                 );
     }

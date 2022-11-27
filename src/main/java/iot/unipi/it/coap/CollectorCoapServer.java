@@ -1,4 +1,4 @@
-package iot.unipi.it;
+package iot.unipi.it.coap;
 
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.CoapServer;
@@ -51,15 +51,25 @@ public class CollectorCoapServer extends CoapServer {
                 exchange.respond(CoAP.ResponseCode.NOT_ACCEPTABLE, "Registration not allowed!".getBytes(StandardCharsets.UTF_8));
             }
         }
-        /*
+
         @Override
         public void handleDELETE(CoapExchange exchange) {
             String deviceType = exchange.getRequestText();
             String ipAddress = exchange.getSourceAddress().getHostAddress();
             boolean success = true;
+
             switch (deviceType) {
                 case "water_level_sensor":
-                    coapClientHandler.registerWaterLevel(ipAddress);
+                    coapClientHandler.deleteWaterLevel();
+                    break;
+                case "led_water_actuator":
+                    coapClientHandler.deleteLedWater();
+                    break;
+                case "pH_sensor":
+                    coapClientHandler.deletePH();
+                    break;
+                case "led_ph_actuator":
+                    coapClientHandler.deleteLedPH();
                     break;
                 default:
                     success = false;
@@ -71,7 +81,7 @@ public class CollectorCoapServer extends CoapServer {
                 exchange.respond(CoAP.ResponseCode.NOT_ACCEPTABLE, "Registration not allowed!".getBytes(StandardCharsets.UTF_8));
             }
         }
-        */
+
 
     }
 

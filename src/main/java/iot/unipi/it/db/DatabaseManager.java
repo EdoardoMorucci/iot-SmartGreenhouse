@@ -1,4 +1,4 @@
-package iot.unipi.it;
+package iot.unipi.it.db;
 
 import java.sql.*;
 
@@ -13,7 +13,6 @@ public class DatabaseManager {
         String dbUsername = "root";
         String dbPassword = "Password1!";
         String dbName = "sensors";
-
 
 
         //when the object of the class is created the connection is performed
@@ -44,15 +43,15 @@ public class DatabaseManager {
 
     }
 
-    public static void insert_water_level(int water_level, int level_state, String unit, Timestamp ourTimestamp) {
-        String sql = "INSERT INTO water_level (water_level, level_state, unit, time_stamp) VALUES(?, ?, ?, ?)";
+    public static void insert_water_level(int water_level, int level_state, String unit, int ourTimestamp) {
+        String sql = "INSERT INTO waterlevel (water_level, level_state, unit, time_stamp) VALUES(?, ?, ?, ?)";
         try{
             Connection conn = makeConnection();
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, water_level);
             stm.setInt(2, level_state);
             stm.setString(3, unit);
-            stm.setTimestamp(4, ourTimestamp);
+            stm.setInt(4, ourTimestamp);
             stm.executeUpdate();
             conn.close();
         }catch (SQLException se) {
@@ -60,14 +59,14 @@ public class DatabaseManager {
         }
     }
 
-    public static void insert_pH(float pH, int state_pH, Timestamp ourTimestamp) {
-        String sql = "INSERT INTO pH (pH, state_pH, time_stamp) VALUES(?, ?, ?)";
+    public static void insert_pH(float pH, int state_pH, int ourTimestamp) {
+        String sql = "INSERT INTO ph (pH, pH_state, time_stamp) VALUES(?, ?, ?)";
         try{
             Connection conn = makeConnection();
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setFloat(1, pH);
             stm.setInt(2, state_pH);
-            stm.setTimestamp(3, ourTimestamp);
+            stm.setInt(3, ourTimestamp);
             stm.executeUpdate();
             conn.close();
         }catch (SQLException se) {
@@ -77,22 +76,22 @@ public class DatabaseManager {
 
 
     public static void print_data(String table, String offset, String limit) {
-        String sql="SELECT * FROM "+table+" ORDER BY id DESC "+"LIMIT "+limit+" OFFSET "+offset;
+        String sql = "SELECT * FROM " + table + " ORDER BY id DESC " + "LIMIT " + limit + " OFFSET " + offset;
         try {
-            Connection conn=makeConnection();
-            Statement stm=conn.createStatement();
-            print_data2(stm.executeQuery(sql));
+            Connection conn = makeConnection();
+            Statement stm = conn.createStatement();
+            print_out(stm.executeQuery(sql));
             conn.close();
         }catch(SQLException se) {
             se.printStackTrace();
         }
     }
 
-    private static void print_data2(ResultSet rs) {
+    private static void print_out(ResultSet rs) {
 
         try {
-            ResultSetMetaData md=rs.getMetaData();
-            int n_col=md.getColumnCount();
+            ResultSetMetaData md = rs.getMetaData();
+            int n_col = md.getColumnCount();
             for(int i=1; i<n_col+1; i++) {
                 System.out.print(md.getColumnName(i)+ "\t");
                 if(i==2)

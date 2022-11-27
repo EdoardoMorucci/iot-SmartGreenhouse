@@ -1,5 +1,6 @@
-package iot.unipi.it;
+package iot.unipi.it.coap;
 
+import iot.unipi.it.db.DatabaseManager;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapObserveRelation;
@@ -8,8 +9,6 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.json.JSONObject;
 
 
-import javax.xml.crypto.Data;
-import java.awt.geom.RectangularShape;
 import java.sql.Timestamp;
 
 import static java.lang.Thread.sleep;
@@ -25,6 +24,11 @@ public class CoapClientHandler {
 
     private static CoapClientHandler instance = null;
 
+    public static boolean onePrintPH = false;
+    public static boolean onePrintWater = false;
+    public static boolean continuosPrintPH = false;
+    public static boolean continuosPrintWater = false;
+
     public static CoapClientHandler getInstance() {
         if (instance == null) {
             instance = new CoapClientHandler();
@@ -34,12 +38,10 @@ public class CoapClientHandler {
 
 
     public void registerWaterLevel(String ipAddress) {
-
-        /*
         if(clientWaterLevel != null) {
-            System.out.println("Water level sensor already registered on: " + ipAddress + ".\n");
+            System.out.println("The water level sensor: " + ipAddress + " is ALREADY registered!!! \n");
             return;
-        }*/
+        }
         System.out.println("The water level sensor: " + ipAddress + " is registered!!\n");
         clientWaterLevel = new CoapClient("coap://[" + ipAddress + "]/water_level_sensor");
 
@@ -63,7 +65,7 @@ public class CoapClientHandler {
             JSONObject responseText = new JSONObject(coapResponse.getResponseText());
             String state_water_level;
 
-            System.out.printf("[WaterLevel]: %s\n", responseText.toString());
+            //System.out.printf("[WaterLevel]: %s\n", responseText.toString());
 
             if (responseText.has("water_level")) {
                 int water_level = responseText.getInt("water_level");
@@ -79,18 +81,21 @@ public class CoapClientHandler {
                     state_water_level = "medium";
                     int_state = 2;
                 }
+
                 // change led status, making a put on led actuator
-                changeLedWater(String.valueOf(water_level));
+                if(clientLedWater != null)
+                    changeLedWater(String.valueOf(water_level));
 
-                System.out.printf("The water level is: %d (%s)\n", water_level, state_water_level);
+                if (continuosPrintWater || onePrintWater) {
+                    System.out.printf("The water level is: %d (%s)\n", water_level, state_water_level);
+                    if (onePrintWater)
+                        onePrintWater = false;
+                }
 
-                long now = System.currentTimeMillis();
-                Timestamp sqlTimestamp = new Timestamp(now);
-                //System.out.println("currentTimeMillis     : " + now);
-                //System.out.println("SqlTimestamp          : " + sqlTimestamp);
-                //System.out.println("SqlTimestamp.getTime(): " + sqlTimestamp.getTime());
+                //long now = System.currentTimeMillis();
+                //Timestamp sqlTimestamp = new Timestamp(now);
 
-                DatabaseManager.insert_water_level(water_level, int_state, "liter", sqlTimestamp);
+                DatabaseManager.insert_water_level(water_level, int_state, "liter", timestamp);
             }
 
         } catch (Exception e) {
@@ -100,11 +105,13 @@ public class CoapClientHandler {
     }
 
     public void registerLedWater(String ipAddress) {
-        System.out.println("The actuators leds of water: " + ipAddress + "is registered!!! \n");
+        if(clientLedWater != null) {
+            System.out.println("The actuators leds of water: " + ipAddress + " is ALREADY registered!!! \n");
+            return;
+        }
+
+        System.out.println("The actuators leds of water: " + ipAddress + " is registered!!! \n");
         clientLedWater = new CoapClient("coap://[" + ipAddress + "]/res_led_water");
-        //System.out.println("URI: "+clientLedWater.getURI()+ "\n");
-        //System.out.println("ping: "+ clientLedWater.ping() + "\n");
-        //System.out.println("ping: "+ clientLedWater. + "\n");
 
         try {
             sleep(5);
@@ -133,12 +140,11 @@ public class CoapClientHandler {
     }
 
     public void registerPH(String ipAddress) {
-
-        /*
-        if(clientWaterLevel != null) {
-            System.out.println("Water level sensor already registered on: " + ipAddress + ".\n");
+        if(clientPH != null) {
+            System.out.println("The pH sensor: " + ipAddress + " is ALREADY registered!!! \n");
             return;
-        }*/
+        }
+
         System.out.println("The pH sensor: " + ipAddress + " is registered!!\n");
         clientPH = new CoapClient("coap://[" + ipAddress + "]/pH_sensor");
 
@@ -161,7 +167,7 @@ public class CoapClientHandler {
         try {
             JSONObject responseText = new JSONObject(coapResponse.getResponseText());
 
-            System.out.printf("[PH] %s\n", responseText.toString());
+            // System.out.printf("[PH] %s\n", responseText.toString());
             String state_pH;
             if (responseText.has("pH")) {
                 float pH = responseText.getFloat("pH");
@@ -179,18 +185,21 @@ public class CoapClientHandler {
                     state_pH = "good";
                     int_state = 2;
                 }
+
                 // change led status, making a put on led actuator
-                changeLedPH(String.valueOf(pH));
+                if (clientLedPH != null)
+                    changeLedPH(String.valueOf(pH));
 
-                System.out.printf("The pH is: %f (%s)\n", pH, state_pH);
+                if (continuosPrintPH || onePrintPH) {
+                    System.out.printf("The pH is: %f (%s)\n", pH, state_pH);
+                    if (onePrintPH)
+                        onePrintPH = false;
+                }
 
-                long now = System.currentTimeMillis();
-                Timestamp sqlTimestamp = new Timestamp(now);
-                //System.out.println("currentTimeMillis     : " + now);
-                //System.out.println("SqlTimestamp          : " + sqlTimestamp);
-                //System.out.println("SqlTimestamp.getTime(): " + sqlTimestamp.getTime());
+                // long now = System.currentTimeMillis();
+                // Timestamp sqlTimestamp = new Timestamp(now);
 
-                DatabaseManager.insert_pH(pH, int_state, sqlTimestamp);
+                DatabaseManager.insert_pH(pH, int_state, timestamp);
             }
 
         } catch (Exception e) {
@@ -200,11 +209,13 @@ public class CoapClientHandler {
     }
 
     public void registerLedPH(String ipAddress) {
+        if(clientLedPH != null) {
+            System.out.println("The actuators leds of pH: " + ipAddress + "is ALREADY registered!!! \n");
+            return;
+        }
+
         System.out.println("The actuators leds of water: " + ipAddress + "is registered!!! \n");
         clientLedPH = new CoapClient("coap://[" + ipAddress + "]/res_led_ph");
-        //System.out.println("URI: "+clientLedWater.getURI()+ "\n");
-        //System.out.println("ping: "+ clientLedWater.ping() + "\n");
-        //System.out.println("ping: "+ clientLedWater. + "\n");
 
         try {
             sleep(5);
@@ -226,20 +237,20 @@ public class CoapClientHandler {
 
             @Override
             public void onError() {
-                //System.err.println("[ERROR]: Led Water: " + clientRipeningNotifier.getURI() + "] ");
                 System.err.println("[ERROR] led ph actuator");
             }
         }, responseString, MediaTypeRegistry.TEXT_PLAIN);
     }
 
     public void printWaterLevelSensor() {
-        System.out.printf("Water Level sensor: %s\n", clientWaterLevel.getURI());
+        if(clientWaterLevel != null) {
+            System.out.printf("Water Level sensor: %s\n", clientWaterLevel.getURI());
+        }
     }
 
     public void printpHSensor() {
         if(clientPH != null) {
-            CoapResponse coapResponse = clientPH.get();
-            handlePHResponse(coapResponse);
+            System.out.printf("pH sensor: %s\n", clientPH.getURI());
         }
     }
 
@@ -251,7 +262,26 @@ public class CoapClientHandler {
     }
 
     public void getCurrentpH() {
+        if(clientPH != null) {
+            CoapResponse coapResponse = clientPH.get();
+            handlePHResponse(coapResponse);
+        }
+    }
 
+    public void deleteLedWater(){
+        clientLedWater = null;
+    }
+
+    public void deleteWaterLevel(){
+        clientWaterLevel = null;
+    }
+
+    public void deleteLedPH(){
+        clientLedPH = null;
+    }
+
+    public void deletePH(){
+        clientPH = null;
     }
 
 }

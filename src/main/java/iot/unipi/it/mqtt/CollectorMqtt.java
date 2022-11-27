@@ -138,7 +138,7 @@ public class CollectorMqtt implements MqttCallback {
             }
         } else if (topic.equals(humiditySens)) {
             if (jsonPayload.has("humidity") && jsonPayload.has("timestamp")) {
-                if(continuousTemp) {
+                if(continuousHum) {
                     System.out.printf("[%s] %s\n", topic, new String(payload));
                 }
                 currentHumidity = jsonPayload.getInt("humidity");
@@ -148,7 +148,7 @@ public class CollectorMqtt implements MqttCallback {
 
                 if (currentHumidity < MIN_HUMIDITY) {
                     if (tapStatus.equals("Closed")) {
-                        if(continuousTemp) {
+                        if(continuousHum) {
                             System.out.println("We need to switch on the irrigation system");
                         }
                         tapStatus = "Open";
@@ -156,7 +156,7 @@ public class CollectorMqtt implements MqttCallback {
                     }
                 } else if (currentHumidity == MAX_HUMIDITY) {
                     if (tapStatus.equals("Open")) {
-                        if(continuousTemp) {
+                        if(continuousHum) {
                             System.out.println("We need to switch off the irrigation system");
                         }
                         tapStatus = "Closed";

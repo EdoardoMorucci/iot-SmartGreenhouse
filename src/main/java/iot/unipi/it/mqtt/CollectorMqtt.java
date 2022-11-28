@@ -56,7 +56,7 @@ public class CollectorMqtt implements MqttCallback {
         try{
             MqttMessage messageToSend = new MqttMessage(message.getBytes());
             mqttClient.publish(topic, messageToSend);
-            System.out.printf("Message sent on topic %s\n", topic);
+            //System.out.printf("Message sent on topic %s\n", topic);
         }catch(MqttException mqtte){
             mqtte.printStackTrace();
         }
@@ -187,6 +187,6 @@ public class CollectorMqtt implements MqttCallback {
 
     @Override
     public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-        System.out.println("Delivery is complete!");
+        //System.out.println("Delivery is complete!");
     }
 }

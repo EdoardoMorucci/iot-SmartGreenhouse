@@ -17,7 +17,6 @@ public class Collector {
 
         CollectorCoapServer coapServer = new CollectorCoapServer();
         CollectorMqtt collectorMqtt = new CollectorMqtt();
-        //server.add(new CoAPResourceExample("hello"));
         coapServer.start();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -86,11 +85,11 @@ public class Collector {
                         }
                         break;
 
-                    case "!printContinuousHumidity":
+                    case "!continuousHumidity":
                         collectorMqtt.setContinuousHum(true);
                         break;
 
-                    case "!printContinuousTemperature":
+                    case "!continuousTemperature":
                         collectorMqtt.setContinuousTemp(true);
                         break;
 
@@ -102,17 +101,10 @@ public class Collector {
                         break;
 
                     default:
-                        System.out.println("This command is not available.");
                         printCommands();
+                        System.out.printf("%s \n", command);
+                        System.out.println("This command is not available.");
                 }
-
-
-
-                System.out.printf("%s \n", command);
-
-                //server.printWaterLevel();
-
-
             } catch (IOException e) {
                 System.out.println("Command not found!");
             }
@@ -135,21 +127,21 @@ public class Collector {
                 "----------   SMART GREENHOUSE APPPLICATION   ----------\n" +
                 "Choose a command from the list:\n" +
                 "   !help \n" +
-                "   !currentWater --> get the current value of the water tank \n" +
-                "   !continuousWater --> continuous print of water level received, stop using !stop\n" +
-                "   !waterLevelSensor --> print the ip address of the water level sensor (if present) \n" +
-                "   !currentpH --> get the current value of the water pH in the tank\n" +
-                "   !continuousPH --> continuous print of pH received, stop using !stop\n" +
-                "   !pHSensor --> print the ip address of the pH sensor (if present)\n" +
-                "   !printHistorypH <limit> <offset>\n " +
-                "   !printHistoryWaterLevel <limit> <offset>\n " +
-                "   !currentTemperature --> get the current temperature in thr greenhouse\n" +
-                "   !currentHumidity --> get the current soil humidity expressed as percentage\n" +
+                "   !currentWater --> (COAP) get the current value of the water tank \n" +
+                "   !currentpH --> (COAP) get the current value of the water pH in the tank\n" +
+                "   !currentTemperature --> (MQTT) get the current temperature in thr greenhouse\n" +
+                "   !currentHumidity --> (MQTT) get the current soil humidity expressed as percentage\n" +
+                "   !continuousWater --> (COAP) continuous print of water level received, stop using !stop\n" +
+                "   !continuousPH --> (COAP) continuous print of pH received, stop using !stop\n" +
+                "   !continuousHumidity --> (MQTT) continuous print of Humidity received, stop using !stop\n" +
+                "   !continuousTemperature --> (MQTT) continuous print of Temperature received, stop using !stop\n" +
+                "   !waterLevelSensor --> (COAP) print the ip address of the water level sensor (if present)\n" +
+                "   !pHSensor --> (COAP) print the ip address of the pH sensor (if present)\n" +
+                "   !printHistorypH <limit> <offset>\n" +
+                "   !printHistoryWaterLevel <limit> <offset>\n" +
                 "   !printHistoryTemperature <limit> <offset>\n" +
                 "   !printHistoryHumidity <limit> <offset>\n" +
-                "   !printHistoryWaterLevel <limit> <offset>\n " +
-                "   !printContinuousHumidity --> continuous print of Humidity received, stop using !stop\n" +
-                "   !printContinuousTemperature --> continuous print of Temperature received, stop using !stop\n" +
+                "   !printHistoryWaterLevel <limit> <offset>\n" +
                 "   !stop --> stop continuous printing \n"
                 );
     }

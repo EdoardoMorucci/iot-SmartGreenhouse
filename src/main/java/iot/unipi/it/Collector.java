@@ -22,7 +22,6 @@ public class Collector {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String command = "";
 
-
         printCommands();
 
         while(true){
@@ -44,11 +43,11 @@ public class Collector {
                     case "!waterLevelSensor":
                         coapServer.printWaterLevelSensor();
                         break;
-                    case "!currentpH":
+                    case "!currentPH":
                         coapServer.getCurrentpH();
                         CoapClientHandler.onePrintPH = true;
                         break;
-                    case "!continuouspH":
+                    case "!continuousPH":
                         CoapClientHandler.continuosPrintPH = true;
                         break;
                     case "!pHSensor":
@@ -59,7 +58,7 @@ public class Collector {
                             DatabaseManager.print_data("ph", splittedCommand[1], splittedCommand[2]);
                         }
                         break;
-                    case "!printHistoryWaterLevel":
+                    case "!printHistoryWater":
                         if(checkNumberParameter(splittedCommand, 3)) {
                             DatabaseManager.print_data("waterlevel", splittedCommand[1], splittedCommand[2]);
                         }
@@ -128,7 +127,7 @@ public class Collector {
                 "Choose a command from the list:\n" +
                 "   !help \n" +
                 "   !currentWater --> (COAP) get the current value of the water tank \n" +
-                "   !currentpH --> (COAP) get the current value of the water pH in the tank\n" +
+                "   !currentPH --> (COAP) get the current value of the water pH in the tank\n" +
                 "   !currentTemperature --> (MQTT) get the current temperature in thr greenhouse\n" +
                 "   !currentHumidity --> (MQTT) get the current soil humidity expressed as percentage\n" +
                 "   !continuousWater --> (COAP) continuous print of water level received, stop using !stop\n" +
@@ -138,13 +137,12 @@ public class Collector {
                 "   !waterLevelSensor --> (COAP) print the ip address of the water level sensor (if present)\n" +
                 "   !pHSensor --> (COAP) print the ip address of the pH sensor (if present)\n" +
                 "   !printHistorypH <limit> <offset>\n" +
-                "   !printHistoryWaterLevel <limit> <offset>\n" +
+                "   !printHistoryWater <limit> <offset>\n" +
                 "   !printHistoryTemperature <limit> <offset>\n" +
                 "   !printHistoryHumidity <limit> <offset>\n" +
                 "   !printHistoryWaterLevel <limit> <offset>\n" +
                 "   !stop --> stop continuous printing \n"
                 );
     }
-
 
 }

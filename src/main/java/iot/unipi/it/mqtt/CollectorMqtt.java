@@ -33,9 +33,13 @@ public class CollectorMqtt implements MqttCallback {
     private float currentTemp;
     private int currentHumidity;
     private MqttClient mqttClient = null;
+
+    private static long startTime;
+
     public CollectorMqtt() throws MqttException {
         do{
             try{
+                startTime = System.currentTimeMillis();
                 Thread.sleep(5000);
                 this.mqttClient = new MqttClient(this.broker, this.clientId);
                 this.mqttClient.setCallback(this);
@@ -45,7 +49,7 @@ public class CollectorMqtt implements MqttCallback {
                 System.out.printf("Subscribed to %s topic!\n", this.temperatureSens);
                 this.mqttClient.subscribe(this.humiditySens);
                 System.out.printf("Subscribed to %s topic!\n", this.humiditySens);
-            }catch(MqttException | InterruptedException mqtte){
+            }catch(MqttException | InterruptedException mqtte) {
                 System.out.println("Error during the connection");
             }
         }while(!this.mqttClient.isConnected());
@@ -94,9 +98,10 @@ public class CollectorMqtt implements MqttCallback {
                     System.out.printf("[%s] %s\n", topic, new String(payload));
                 }
                 currentTemp = jsonPayload.getFloat("temperature");
-                int time = jsonPayload.getInt("timestamp");
+                int secondsFromStart = jsonPayload.getInt("timestamp");
 
-                DatabaseManager.insert_temperature(currentTemp, "Celsius", time);
+                Timestamp timestamp = new Timestamp(startTime + (secondsFromStart * 1000L));
+                DatabaseManager.insert_temperature(currentTemp, "Celsius", timestamp);
 
                 if (currentTemp < MAX_TEMP && currentTemp > MIN_TEMP) {
                     if(continuousTemp) {
@@ -142,9 +147,10 @@ public class CollectorMqtt implements MqttCallback {
                     System.out.printf("[%s] %s\n", topic, new String(payload));
                 }
                 currentHumidity = jsonPayload.getInt("humidity");
-                int time = jsonPayload.getInt("timestamp");
+                int secondsFromStart = jsonPayload.getInt("timestamp");
 
-                DatabaseManager.insert_humidity(currentHumidity, "%", time);
+                Timestamp timestamp = new Timestamp(startTime + (secondsFromStart * 1000L));
+                DatabaseManager.insert_humidity(currentHumidity, "%", timestamp);
 
                 if (currentHumidity < MIN_HUMIDITY) {
                     if (tapStatus.equals("Closed")) {

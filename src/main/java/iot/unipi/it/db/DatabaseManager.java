@@ -43,7 +43,7 @@ public class DatabaseManager {
 
     }
 
-    public static void insert_water_level(int water_level, int level_state, String unit, int ourTimestamp) {
+    public static void insert_water_level(int water_level, int level_state, String unit, Timestamp ourTimestamp) {
         String sql = "INSERT INTO waterlevel (water_level, level_state, unit, time_stamp) VALUES(?, ?, ?, ?)";
         try{
             Connection conn = makeConnection();
@@ -51,7 +51,7 @@ public class DatabaseManager {
             stm.setInt(1, water_level);
             stm.setInt(2, level_state);
             stm.setString(3, unit);
-            stm.setInt(4, ourTimestamp);
+            stm.setTimestamp(4, ourTimestamp);
             stm.executeUpdate();
             conn.close();
         }catch (SQLException se) {
@@ -59,28 +59,28 @@ public class DatabaseManager {
         }
     }
 
-    public static void insert_pH(float pH, int state_pH, int ourTimestamp) {
+    public static void insert_pH(float pH, int state_pH, Timestamp ourTimestamp) {
         String sql = "INSERT INTO ph (pH, pH_state, time_stamp) VALUES(?, ?, ?)";
         try{
             Connection conn = makeConnection();
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setFloat(1, pH);
             stm.setInt(2, state_pH);
-            stm.setInt(3, ourTimestamp);
+            stm.setTimestamp(3, ourTimestamp);
             stm.executeUpdate();
             conn.close();
         }catch (SQLException se) {
             se.printStackTrace();
         }
     }
-    public static void insert_temperature(float temperature, String unit, int ourTimestamp){
+    public static void insert_temperature(float temperature, String unit, Timestamp ourTimestamp){
         String sql = "INSERT INTO temperature (temperature, unit, time_stamp) VALUES(?, ?, ?)";
         try{
             Connection conn = makeConnection();
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setFloat(1, temperature);
             stm.setString(2, unit);
-            stm.setInt(3, ourTimestamp);
+            stm.setTimestamp(3, ourTimestamp);
             stm.executeUpdate();
             conn.close();
         }catch (SQLException se) {
@@ -88,14 +88,14 @@ public class DatabaseManager {
         }
     }
 
-    public static void insert_humidity(int humidity, String unit, int ourTimestamp){
+    public static void insert_humidity(int humidity, String unit, Timestamp ourTimestamp){
         String sql = "INSERT INTO humidity (humidity, unit, time_stamp) VALUES(?, ?, ?)";
         try{
             Connection conn = makeConnection();
             PreparedStatement stm = conn.prepareStatement(sql);
             stm.setInt(1, humidity);
             stm.setString(2, unit);
-            stm.setInt(3, ourTimestamp);
+            stm.setTimestamp(3, ourTimestamp);
             stm.executeUpdate();
             conn.close();
         }catch (SQLException se) {

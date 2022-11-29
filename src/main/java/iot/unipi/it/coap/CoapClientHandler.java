@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 import static java.lang.Thread.sleep;
 
@@ -29,9 +30,12 @@ public class CoapClientHandler {
     public static boolean continuosPrintPH = false;
     public static boolean continuosPrintWater = false;
 
+    private static long startTime;
+
     public static CoapClientHandler getInstance() {
         if (instance == null) {
             instance = new CoapClientHandler();
+            startTime = System.currentTimeMillis();
         }
         return instance;
     }
@@ -69,7 +73,7 @@ public class CoapClientHandler {
 
             if (responseText.has("water_level")) {
                 int water_level = responseText.getInt("water_level");
-                int timestamp = responseText.getInt("timestamp");
+                int secondsFromStart = responseText.getInt("timestamp");
                 int int_state;
                 if (water_level < 700) {
                     state_water_level = "low";
@@ -92,9 +96,8 @@ public class CoapClientHandler {
                         onePrintWater = false;
                 }
 
-                //long now = System.currentTimeMillis();
-                //Timestamp sqlTimestamp = new Timestamp(now);
 
+                Timestamp timestamp = new Timestamp(startTime + (secondsFromStart * 1000L));
                 DatabaseManager.insert_water_level(water_level, int_state, "liter", timestamp);
             }
 
@@ -171,7 +174,7 @@ public class CoapClientHandler {
             String state_pH;
             if (responseText.has("pH")) {
                 float pH = responseText.getFloat("pH");
-                int timestamp = responseText.getInt("timestamp");
+                int secondsFromStart = responseText.getInt("timestamp");
                 int int_state;
                 if (pH < 6.5 || pH > 7.5) {
                     if (pH < 6 || pH > 8) {
@@ -191,14 +194,14 @@ public class CoapClientHandler {
                     changeLedPH(String.valueOf(pH));
 
                 if (continuosPrintPH || onePrintPH) {
-                    System.out.printf("The pH is: %f (%s)\n", pH, state_pH);
+                    System.out.printf("The pH is: %.1f (%s)\n", pH, state_pH);
                     if (onePrintPH)
                         onePrintPH = false;
                 }
 
                 // long now = System.currentTimeMillis();
                 // Timestamp sqlTimestamp = new Timestamp(now);
-
+                Timestamp timestamp = new Timestamp(startTime + (secondsFromStart * 1000L));
                 DatabaseManager.insert_pH(pH, int_state, timestamp);
             }
 

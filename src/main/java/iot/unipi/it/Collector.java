@@ -69,7 +69,7 @@ public class Collector {
                         break;
 
                     case "!currentHumidity":
-                        System.out.println("The current humidity is " + collectorMqtt.getCurrentHumidity());
+                        System.out.println("The current humidity is " + collectorMqtt.getCurrentHumidity() + "%");
                         break;
 
                     case "!printHistoryTemperature":
